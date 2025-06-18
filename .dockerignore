@@ -1,0 +1,8 @@
+devbox.json
+devbox.lock
+docker-compose.yaml
+.env.sample
+readme.md
+*_collection.json
+.devbox/
+.vscode/

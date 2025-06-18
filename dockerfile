@@ -29,4 +29,5 @@ ENV PORT=8080
 
 EXPOSE ${PORT}
 
-CMD ["surl http --port ${PORT}"]
+CMD top
+# CMD ["/app/surl http --port ${PORT}"]
