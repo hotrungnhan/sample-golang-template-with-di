@@ -23,10 +23,9 @@ RUN apk --no-cache add ca-certificates go-task-task postgresql-client
 
 WORKDIR /app
 
-COPY --from=build-env /app/surl /bin
+COPY --from=build-env /app/Taskfile.yml ./
+COPY --from=build-env /app/surl ./
 
-ENV PORT=8080
+EXPOSE 8080
 
-EXPOSE ${PORT}
-
-ENTRYPOINT ["surl", "http --port ${PORT}"]
+CMD ["/app/surl", "http", "-p", "8080"]
