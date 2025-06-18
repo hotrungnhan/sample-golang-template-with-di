@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	. "github.com/hotrungnhan/surl/controllers"
@@ -12,6 +13,7 @@ import (
 	"github.com/hotrungnhan/surl/serializers"
 	"github.com/hotrungnhan/surl/services"
 	"github.com/stretchr/testify/mock"
+	"github.com/tidwall/gjson"
 
 	"github.com/gofiber/fiber/v3"
 	. "github.com/onsi/ginkgo/v2"
@@ -51,9 +53,13 @@ var _ = Describe("ShortenUrlController", func() {
 
 			res, err := app.Test(req)
 
+			resBodyBytes, _ := io.ReadAll(res.Body)
+
 			Expect(err).To(BeNil())
 
 			Expect(res.StatusCode).To(Equal(400))
+
+			Expect(gjson.GetBytes(resBodyBytes, "message").String()).To(ContainSubstring("len"))
 
 		})
 		It("Correct", func() {
@@ -84,9 +90,12 @@ var _ = Describe("ShortenUrlController", func() {
 
 			res, err := app.Test(req)
 
+			resBodyBytes, _ := io.ReadAll(res.Body)
+
 			Expect(err).To(BeNil())
 
 			Expect(res.StatusCode).To(Equal(400))
+			Expect(gjson.GetBytes(resBodyBytes, "message").String()).To(ContainSubstring("len"))
 
 		})
 		It("Correct", func() {
@@ -131,9 +140,13 @@ var _ = Describe("ShortenUrlController", func() {
 
 			res, err := app.Test(req)
 
+			resBodyBytes, _ := io.ReadAll(res.Body)
+
 			Expect(err).To(BeNil())
 
 			Expect(res.StatusCode).To(Equal(400))
+
+			Expect(gjson.GetBytes(resBodyBytes, "message").String()).To(ContainSubstring("required"))
 
 		})
 		It("bind invalid params #2", func() {
