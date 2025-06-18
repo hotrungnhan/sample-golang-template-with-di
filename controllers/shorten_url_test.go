@@ -63,12 +63,12 @@ var _ = Describe("ShortenUrlController", func() {
 
 		})
 		It("Correct", func() {
-			url := "https://example.com"
-			req, err := http.NewRequest("GET", "/shortlinks/12345678", nil)
+			record := models.ShortenUrlFactory.MustCreate().(*models.ShortenUrl)
 
-			record := models.ShortenUrl{ID: "12345678", OriginalUrl: url}
-			mockShortenUrlService.On("Get", mock.Anything, &services.GetShortenUrlParams{ID: "12345678"}).Return(
-				serializers.NewShortUrlDetailSerializer(&record),
+			req, err := http.NewRequest("GET", fmt.Sprintf("/shortlinks/%s", record.ID), nil)
+
+			mockShortenUrlService.On("Get", mock.Anything, &services.GetShortenUrlParams{ID: record.ID}).Return(
+				serializers.NewShortUrlDetailSerializer(record),
 				nil,
 			)
 
@@ -78,7 +78,7 @@ var _ = Describe("ShortenUrlController", func() {
 
 			Expect(res.StatusCode).To(Equal(302))
 
-			Expect(res.Header.Get(fiber.HeaderLocation)).To(Equal(url))
+			Expect(res.Header.Get(fiber.HeaderLocation)).To(Equal(record.OriginalUrl))
 		})
 	})
 
@@ -99,13 +99,11 @@ var _ = Describe("ShortenUrlController", func() {
 
 		})
 		It("Correct", func() {
-			id := "12345678"
-			url := "https://example.com"
-			req, err := http.NewRequest("GET", fmt.Sprintf("/api/shortlinks/%s", id), nil)
+			record := models.ShortenUrlFactory.MustCreate().(*models.ShortenUrl)
+			req, err := http.NewRequest("GET", fmt.Sprintf("/api/shortlinks/%s", record.ID), nil)
 
-			record := models.ShortenUrl{ID: id, OriginalUrl: url}
-			mockShortenUrlService.On("Get", mock.Anything, &services.GetShortenUrlParams{ID: id}).Return(
-				serializers.NewShortUrlDetailSerializer(&record),
+			mockShortenUrlService.On("Get", mock.Anything, &services.GetShortenUrlParams{ID: record.ID}).Return(
+				serializers.NewShortUrlDetailSerializer(record),
 				nil,
 			)
 
@@ -119,8 +117,8 @@ var _ = Describe("ShortenUrlController", func() {
 			err = json.NewDecoder(res.Body).Decode(&resp)
 			Expect(err).To(BeNil())
 
-			Expect(resp).To(HaveKeyWithValue("original_url", url))
-			Expect(resp).To(HaveKeyWithValue("id", id))
+			Expect(resp).To(HaveKeyWithValue("original_url", record.OriginalUrl))
+			Expect(resp).To(HaveKeyWithValue("id", record.ID))
 			Expect(resp).To(HaveKey("created_at"))
 		})
 	})
@@ -170,19 +168,19 @@ var _ = Describe("ShortenUrlController", func() {
 		})
 
 		It("Correct", func() {
-			url := "https://example.com"
+			record := models.ShortenUrlFactory.MustCreate().(*models.ShortenUrl)
+
 			jsonBody, err := json.Marshal(map[string]string{
-				"original_url": url,
+				"original_url": record.OriginalUrl,
 			})
+
 			Expect(err).To(BeNil())
 
 			req, err := http.NewRequest("POST", "/api/shortlinks", bytes.NewBuffer(jsonBody))
 			req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
-			record := models.ShortenUrl{ID: "12345678", OriginalUrl: url}
-
-			mockShortenUrlService.On("Add", mock.Anything, &services.AddShortenUrlParams{OriginalUrl: url}).Return(
-				serializers.NewShortUrlDetailSerializer(&record),
+			mockShortenUrlService.On("Add", mock.Anything, &services.AddShortenUrlParams{OriginalUrl: record.OriginalUrl}).Return(
+				serializers.NewShortUrlDetailSerializer(record),
 				nil,
 			)
 
