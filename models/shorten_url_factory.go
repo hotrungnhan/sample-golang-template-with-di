@@ -14,5 +14,6 @@ var ShortenUrlFactory = factory.NewFactory(
 	ins := args.Instance().(*ShortenUrl)
 
 	ins.BeforeCreate(nil)
+
 	return nil
 })
