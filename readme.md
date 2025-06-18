@@ -23,6 +23,7 @@ Step 6: Remove infra `task down`
 * [x] Validate Parameter (original URL)
 * [x] Core business Unit test.
 * [x] 3 tier architecture && CQRS pattern
+* [ ] auto generate swagger docs
 
 ## Folder Structure Overview
 
