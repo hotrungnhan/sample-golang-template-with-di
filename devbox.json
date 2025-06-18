@@ -1,0 +1,26 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.0/.schema/devbox.schema.json",
+  "packages": [
+    "go@latest",
+    "gcov2lcov@latest",
+    "ginkgo@2.23.4",
+    "go-migrate@4.17.1",
+    "golangci-lint@latest",
+    "toybox@latest",
+    "go-mockery@2.53.3",
+    "postgresql@17",
+    "docker@latest",
+    "docker-compose@latest",
+    "go-task@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "echo 'Welcome to devbox!' > /dev/null"
+    ],
+    "scripts": {
+      "test": [
+        "echo \"Error: no test specified\" && exit 1"
+      ]
+    }
+  }
+}

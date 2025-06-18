@@ -1,0 +1,119 @@
+# https://taskfile.dev
+
+version: '3'
+
+dotenv: ['.env']
+
+vars:
+  MIGRATION_DIR: ./migrations/
+  SOURCE_URL: postgres://$MASTER_DB_USERNAME:$MASTER_DB_PASSWORD@$MASTER_DB_HOST:$MASTER_DB_PORT/$MASTER_DB_NAME?sslmode=disable
+tasks:
+  run:
+    desc: "Run the application"
+    cmds:
+      - go run ./cmds/main {{.CLI_ARGS}}
+    silent: true
+  ci:
+    desc: "Run CI tasks"
+    cmds:
+      - golangci-lint run
+
+    silent: true
+  test:
+    desc: "Run tests with coverage"
+    cmds:
+      - ginkgo -cover -coverpkg=./cmds,./controllers,./services,./repositories,./serializers -coverprofile=coverage.out ./...
+      - mkdir -p ./coverage
+      - go tool cover -html=coverage.out -o ./coverage/coverage.html
+      - gcov2lcov -infile=coverage.out -outfile=./coverage/lcov.info
+    silent: true
+ 
+  db:seed:
+    desc: "Seed the database"
+    cmds:
+      - go run ./cmds/main seed --only {{.values}}
+    silent: true
+  db:seed:all:
+    desc: "Seed the database"
+    cmds:
+      - go run ./cmds/main seed --all
+    silent: true
+  db:create:
+    desc: "Create database"
+    cmds:
+      - PGPASSWORD=$MASTER_DB_PASSWORD psql -h $MASTER_DB_HOST -U $MASTER_DB_USERNAME -w -c "CREATE DATABASE $MASTER_DB_NAME;"
+    silent: true
+  db:drop:
+    desc: "Drop database"
+    cmds:
+      - PGPASSWORD=$MASTER_DB_PASSWORD psql -h $MASTER_DB_HOST -U $MASTER_DB_USERNAME -w -c "DROP DATABASE IF EXISTS $MASTER_DB_NAME;"
+    silent: true
+  db:setup:
+    desc: "Setup database"
+    cmds:
+      - task: db:drop
+      - task: db:create
+      - task: db:migrate:up:all
+      - task: db:seed:all
+    silent: true
+  db:migrate:create:
+    desc: "Run database migrations"
+    requires:
+      vars: [name]
+    cmds:
+      - migrate create -ext sql -dir "{{.MIGRATION_DIR}}" -seq "{{.name}}"
+    silent: true
+  db:migrate:up:
+    desc: "Migration Up Database"
+    cmds:
+      - migrate -path "{{.MIGRATION_DIR}}" -database "{{.SOURCE_URL}}" up "{{.step}}"
+    vars:
+      step: '{{.step| default "1"}}'
+    silent: true
+  db:migrate:up:all:
+    desc: "Migration Up Database"
+    cmds:
+      - migrate -path "{{.MIGRATION_DIR}}" -database "{{.SOURCE_URL}}" up
+    silent: true
+  db:migrate:down:
+    desc: "Rollback Database"
+    cmds:
+      - migrate -path "{{.MIGRATION_DIR}}" -database "{{.SOURCE_URL}}" down "{{.step}}"
+    vars:
+      step: '{{.step| default "1"}}'
+    silent: true
+  db:migrate:goto:
+    desc: "Goto the exact migration"
+    cmds:
+      - migrate -path "{{.MIGRATION_DIR}}" -database "{{.SOURCE_URL}}" goto "{{.version}}"
+    requires:
+      vars: [version]
+    silent: true
+
+  up:
+    desc: "Run the application"
+    cmds:
+      - docker compose up -d
+    silent: true
+  down:
+    desc: "Run the application"
+    cmds:
+      - docker compose down
+    silent: true
+
+  gen:
+    desc: "Generate code files"
+    cmds:
+      - task: gen:query
+      - task: gen:mock
+    silent: true
+  gen:query:
+    desc: "Generate query code"
+    cmds:
+      - go run ./cmds/gen-sql
+    silent: true
+  gen:mock:
+    cmds:
+      - mockery
+    desc: "Generate mock code"
+    silent: true
