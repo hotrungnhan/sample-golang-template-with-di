@@ -27,7 +27,6 @@ tasks:
       - go tool cover -html=coverage.out -o ./coverage/coverage.html
       - gcov2lcov -infile=coverage.out -outfile=./coverage/lcov.info
     silent: true
- 
   db:seed:
     desc: "Seed the database"
     cmds:
@@ -89,7 +88,6 @@ tasks:
     requires:
       vars: [version]
     silent: true
-
   up:
     desc: "Run the application"
     cmds:
@@ -100,7 +98,6 @@ tasks:
     cmds:
       - docker compose down
     silent: true
-
   gen:
     desc: "Generate code files"
     cmds:
