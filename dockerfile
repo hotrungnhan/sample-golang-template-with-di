@@ -15,7 +15,7 @@ COPY . .
 
 RUN task gen
 
-RUN go build -o surl ./cmds/main
+RUN task build
 
 FROM alpine:latest
 

@@ -80,11 +80,11 @@ func (c *shortenUrlControllerImpl) Add(ctx fiber.Ctx) error {
 
 func (c *shortenUrlControllerImpl) RegisterEndpoint(router fiber.Router) {
 
-	router.Get("/shortlinks/:id", c.GetPublic)
+	router.Get("/shortlinks/:id", c.GetPublic).Name("Redirect Shorten Url")
 
 	apiShortLink := router.Group("/api/shortlinks")
 
-	apiShortLink.Get("/:id", c.Get)
-	apiShortLink.Post("/", c.Add)
+	apiShortLink.Get("/:id", c.Get).Name("Get Shorten Url")
+	apiShortLink.Post("/", c.Add).Name("Add Shorten Url")
 
 }

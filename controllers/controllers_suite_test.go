@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/hotrungnhan/surl/utils/helpers"
 	"github.com/hotrungnhan/surl/utils/types"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -19,8 +18,6 @@ func AppTest() (*fiber.App, fiber.Router) {
 	app := fiber.New(
 		fiber.Config{
 			ErrorHandler:             types.CustomErrorHandler,
-			JSONEncoder:              helpers.Marshal,
-			JSONDecoder:              helpers.Unmarshal,
 			EnableSplittingOnParsers: true,
 		},
 	)

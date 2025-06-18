@@ -8,6 +8,12 @@ type GetShortenUrlParams struct {
 	ID string
 }
 
+func (p *GetShortenUrlParams) ToFilter() *models.ShortenUrlFilterParams {
+	return &models.ShortenUrlFilterParams{
+		ID: &p.ID,
+	}
+}
+
 type AddShortenUrlParams struct {
 	OriginalUrl string
 }

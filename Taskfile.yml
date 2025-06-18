@@ -8,6 +8,11 @@ vars:
   MIGRATION_DIR: ./migrations/
   SOURCE_URL: postgres://$MASTER_DB_USERNAME:$MASTER_DB_PASSWORD@$MASTER_DB_HOST:$MASTER_DB_PORT/$MASTER_DB_NAME?sslmode=disable
 tasks:
+  build:
+    desc: "Build the application"
+    cmds:
+      - go build -o surl ./cmds/main
+    silent: true
   run:
     desc: "Run the application"
     cmds:

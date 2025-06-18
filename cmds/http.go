@@ -5,14 +5,15 @@ import (
 	"github.com/hotrungnhan/surl/controllers"
 	"github.com/hotrungnhan/surl/repositories"
 	"github.com/hotrungnhan/surl/services"
-	"github.com/hotrungnhan/surl/utils/helpers"
 	"github.com/hotrungnhan/surl/utils/injects"
 	"github.com/hotrungnhan/surl/utils/types"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/compress"
 	"github.com/gofiber/fiber/v3/middleware/cors"
+	"github.com/gofiber/fiber/v3/middleware/healthcheck"
 	"github.com/gofiber/fiber/v3/middleware/requestid"
+
 	"github.com/rs/zerolog"
 	"github.com/samber/do/v2"
 	"github.com/samber/lo"
@@ -64,10 +65,9 @@ func (d *HttpServer) Serve() error {
 
 	app := fiber.New(fiber.Config{
 		ErrorHandler:             types.CustomErrorHandler,
-		JSONEncoder:              helpers.Marshal,
-		JSONDecoder:              helpers.Unmarshal,
 		EnableSplittingOnParsers: true,
 	})
+
 	if config.GoEnv == injects.Production {
 		app.Use(requestid.New())
 
@@ -90,7 +90,10 @@ func (d *HttpServer) Serve() error {
 }
 
 func (d *HttpServer) RegisterRouter(app *fiber.App, di do.Injector) {
+
 	base := app.Group("")
+	base.Get("/live", healthcheck.NewHealthChecker()).Name("Live healcheck")
+
 	{
 		v1Controllers := []types.Controller{
 			do.MustInvoke[controllers.ShortenUrlController](di),

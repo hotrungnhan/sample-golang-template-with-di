@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 
-	"github.com/hotrungnhan/surl/models"
 	"github.com/hotrungnhan/surl/repositories"
 	"github.com/hotrungnhan/surl/serializers"
 	"github.com/hotrungnhan/surl/utils/injects"
@@ -23,9 +22,7 @@ type shortenUrlServiceImpl struct {
 
 func (s *shortenUrlServiceImpl) Get(ctx context.Context, params *GetShortenUrlParams) (types.ISerializer, error) {
 
-	record, err := s.shortenRepo.Get(ctx, &models.ShortenUrlFilterParams{
-		ID: &params.ID,
-	})
+	record, err := s.shortenRepo.Get(ctx, params.ToFilter())
 	if err != nil {
 		return nil, types.InternalServerError
 	}
