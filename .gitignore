@@ -9,4 +9,4 @@ coverage.out
 **/*.test
 **/ginkgo.report
 .env
-.devbox
+.devbox/
