@@ -1,20 +1,23 @@
 # Guide
+
 Require:
+
 * Devbox
 
 ## Setup And Run project
 
 For testing purpose
 
-Step 0: Please copy `.env.sample` into `.env`
-Step 1: Go to devbox shell `devbox shell`
-Step 2: Start infra `task up`
-Step 3: Setup New DB `task db:setup` (it not have persistent volume)
-Step 4: Generate code `task gen`
-Step 5: Start service`task run -- http`
-Step 6: Remove infra `task down`
+* Step 0: Please copy `.env.sample` into `.env`
+* Step 1: Go to devbox shell `devbox shell`
+* Step 2: Start infra `task up`
+* Step 3: Setup New DB `task db:setup` (it not have persistent volume)
+* Step 4: Generate code `task gen`
+* Step 5: Start service`task run -- http`
+* Step 6: Remove infra `task down`
 
 ## Check list
+
 * [x] POST /api/shortlinks
 * [x] GET /api/shortlinks/{id}
 * [x] GET /shortlinks/{id}
