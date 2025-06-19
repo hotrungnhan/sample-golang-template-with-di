@@ -11,7 +11,8 @@
     "postgresql@17",
     "docker@latest",
     "docker-compose@latest",
-    "go-task@latest"
+    "go-task@latest",
+    "git@latest"
   ],
   "shell": {
     "init_hook": [
