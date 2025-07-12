@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	mapper "github.com/hotrungnhan/go-automapper"
 	repositories_mocks "github.com/hotrungnhan/surl/generated/mocks/repositories"
 	"github.com/hotrungnhan/surl/models"
 	"github.com/hotrungnhan/surl/repositories"
@@ -50,7 +51,7 @@ var _ = Describe("ShortenUrlService", func() {
 			mockShortenRepository.On("Get", ctx, &models.ShortenUrlFilterParams{ID: &params.ID}).Return(record, nil)
 			data, err := service.Get(ctx, params)
 			Expect(err).To(BeNil())
-			Expect(data).To(BeAssignableToTypeOf(serializers.NewShortUrlDetailSerializer(record)))
+			Expect(data).To(BeAssignableToTypeOf(mapper.MustMap[*models.ShortenUrl, *serializers.ShortUrlDetailSerializer](mapper.Global, record)))
 		})
 
 		It("should return InternalServerError if repo returns an error", func() {
@@ -83,7 +84,7 @@ var _ = Describe("ShortenUrlService", func() {
 			mockShortenRepository.On("Get", ctx, params.ToFilter()).Return(record, nil)
 			data, err := service.Add(ctx, params)
 			Expect(err).To(BeNil())
-			Expect(data).To(BeAssignableToTypeOf(serializers.NewShortUrlSerializer(record)))
+			Expect(data).To(BeAssignableToTypeOf(mapper.MustMap[*models.ShortenUrl, *serializers.ShortUrlSerializer](mapper.Global, record)))
 		})
 
 		It("should create a new record if not exists", func() {
@@ -91,7 +92,7 @@ var _ = Describe("ShortenUrlService", func() {
 			mockShortenRepository.On("Add", ctx, params.ToCreateModel()).Return(record, nil)
 			data, err := service.Add(ctx, params)
 			Expect(err).To(BeNil())
-			Expect(data).To(BeAssignableToTypeOf(serializers.NewShortUrlSerializer(record)))
+			Expect(data).To(BeAssignableToTypeOf(mapper.MustMap[*models.ShortenUrl, *serializers.ShortUrlSerializer](mapper.Global, record)))
 		})
 
 		It("should return InternalServerError if repo returns an error", func() {

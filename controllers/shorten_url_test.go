@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 
+	mapper "github.com/hotrungnhan/go-automapper"
 	. "github.com/hotrungnhan/surl/controllers"
 	services_mocks "github.com/hotrungnhan/surl/generated/mocks/services"
 	"github.com/hotrungnhan/surl/models"
@@ -47,7 +48,7 @@ var _ = Describe("ShortenUrlController", func() {
 
 	Describe("Get Public - GET /shortlinks/:id", func() {
 		It("bind invalid params", func() {
-			req, err := http.NewRequest("GET", "/shortlinks/123456", nil)
+			req, _ := http.NewRequest("GET", "/shortlinks/123456", nil)
 
 			mockShortenUrlService.On("Get", mock.Anything, &services.GetShortenUrlParams{ID: "test-id"}).Return(nil, nil)
 
@@ -65,10 +66,10 @@ var _ = Describe("ShortenUrlController", func() {
 		It("Correct", func() {
 			record := models.ShortenUrlFactory.MustCreate().(*models.ShortenUrl)
 
-			req, err := http.NewRequest("GET", fmt.Sprintf("/shortlinks/%s", record.ID), nil)
+			req, _ := http.NewRequest("GET", fmt.Sprintf("/shortlinks/%s", record.ID), nil)
 
 			mockShortenUrlService.On("Get", mock.Anything, &services.GetShortenUrlParams{ID: record.ID}).Return(
-				serializers.NewShortUrlDetailSerializer(record),
+				mapper.MustMap[*models.ShortenUrl, *serializers.ShortUrlDetailSerializer](mapper.Global, record),
 				nil,
 			)
 
@@ -84,7 +85,7 @@ var _ = Describe("ShortenUrlController", func() {
 
 	Describe("Get - GET /api/shortlinks/:id", func() {
 		It("bind invalid params", func() {
-			req, err := http.NewRequest("GET", "/api/shortlinks/123456", nil)
+			req, _ := http.NewRequest("GET", "/api/shortlinks/123456", nil)
 
 			mockShortenUrlService.On("Get", mock.Anything, &services.GetShortenUrlParams{ID: "test-id"}).Return(nil, nil)
 
@@ -100,10 +101,10 @@ var _ = Describe("ShortenUrlController", func() {
 		})
 		It("Correct", func() {
 			record := models.ShortenUrlFactory.MustCreate().(*models.ShortenUrl)
-			req, err := http.NewRequest("GET", fmt.Sprintf("/api/shortlinks/%s", record.ID), nil)
+			req, _ := http.NewRequest("GET", fmt.Sprintf("/api/shortlinks/%s", record.ID), nil)
 
 			mockShortenUrlService.On("Get", mock.Anything, &services.GetShortenUrlParams{ID: record.ID}).Return(
-				serializers.NewShortUrlDetailSerializer(record),
+				mapper.MustMap[*models.ShortenUrl, *serializers.ShortUrlDetailSerializer](mapper.Global, record),
 				nil,
 			)
 
@@ -130,7 +131,7 @@ var _ = Describe("ShortenUrlController", func() {
 			})
 			Expect(err).To(BeNil())
 
-			req, err := http.NewRequest("POST", "/api/shortlinks", bytes.NewBuffer(jsonBody))
+			req, _ := http.NewRequest("POST", "/api/shortlinks", bytes.NewBuffer(jsonBody))
 
 			req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
@@ -153,7 +154,7 @@ var _ = Describe("ShortenUrlController", func() {
 			})
 			Expect(err).To(BeNil())
 
-			req, err := http.NewRequest("POST", "/api/shortlinks", bytes.NewBuffer(jsonBody))
+			req, _ := http.NewRequest("POST", "/api/shortlinks", bytes.NewBuffer(jsonBody))
 
 			req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
@@ -176,11 +177,11 @@ var _ = Describe("ShortenUrlController", func() {
 
 			Expect(err).To(BeNil())
 
-			req, err := http.NewRequest("POST", "/api/shortlinks", bytes.NewBuffer(jsonBody))
+			req, _ := http.NewRequest("POST", "/api/shortlinks", bytes.NewBuffer(jsonBody))
 			req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
 			mockShortenUrlService.On("Add", mock.Anything, &services.AddShortenUrlParams{OriginalUrl: record.OriginalUrl}).Return(
-				serializers.NewShortUrlDetailSerializer(record),
+				mapper.MustMap[*models.ShortenUrl, *serializers.ShortUrlSerializer](mapper.Global, record),
 				nil,
 			)
 

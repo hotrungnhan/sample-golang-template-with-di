@@ -3,6 +3,8 @@ package services
 import (
 	"context"
 
+	mapper "github.com/hotrungnhan/go-automapper"
+	"github.com/hotrungnhan/surl/models"
 	"github.com/hotrungnhan/surl/repositories"
 	"github.com/hotrungnhan/surl/serializers"
 	"github.com/hotrungnhan/surl/utils/injects"
@@ -31,7 +33,7 @@ func (s *shortenUrlServiceImpl) Get(ctx context.Context, params *GetShortenUrlPa
 		return nil, types.NoContentError
 	}
 
-	return serializers.NewShortUrlDetailSerializer(record), nil
+	return mapper.MustMap[*models.ShortenUrl, *serializers.ShortUrlDetailSerializer](mapper.Global, record), nil
 }
 
 func (s *shortenUrlServiceImpl) Add(ctx context.Context, params *AddShortenUrlParams) (types.ISerializer, error) {
@@ -41,16 +43,14 @@ func (s *shortenUrlServiceImpl) Add(ctx context.Context, params *AddShortenUrlPa
 		return nil, types.InternalServerError
 	}
 
-	if record != nil {
-		return serializers.NewShortUrlSerializer(record), nil
+	if record == nil {
+		record, err = s.shortenRepo.Add(ctx, params.ToCreateModel())
+		if err != nil {
+			return nil, types.InternalServerError.WithErrorString("Error when create shorten url")
+		}
 	}
 
-	record, err = s.shortenRepo.Add(ctx, params.ToCreateModel())
-	if err != nil {
-		return nil, types.InternalServerError.WithErrorString("Error when create shorten url")
-	}
-
-	return serializers.NewShortUrlSerializer(record), nil
+	return mapper.MustMap[*models.ShortenUrl, *serializers.ShortUrlSerializer](mapper.Global, record), nil
 }
 
 func NewShortenUrlService(di do.Injector) (ShortenUrlService, error) {
