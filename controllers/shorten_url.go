@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	mapper "github.com/hotrungnhan/go-automapper"
 	"github.com/hotrungnhan/surl/serializers"
 	"github.com/hotrungnhan/surl/services"
 	"github.com/hotrungnhan/surl/utils/helpers"
@@ -37,7 +38,7 @@ func (c *shortenUrlControllerImpl) GetPublic(ctx fiber.Ctx) error {
 		return err
 	}
 
-	data, err := c.shortenUrlService.Get(ctx.Context(), params.ToServiceParams())
+	data, err := c.shortenUrlService.Get(ctx.Context(), mapper.MustMap[*GetShortenUrlParams, *services.GetShortenUrlParams](mapper.Global, params))
 
 	if err != nil {
 		return err
@@ -54,7 +55,7 @@ func (c *shortenUrlControllerImpl) Get(ctx fiber.Ctx) error {
 		return err
 	}
 
-	data, err := c.shortenUrlService.Get(ctx.Context(), params.ToServiceParams())
+	data, err := c.shortenUrlService.Get(ctx.Context(), mapper.MustMap[*GetShortenUrlParams, *services.GetShortenUrlParams](mapper.Global, params))
 
 	if err != nil {
 		return err
@@ -69,7 +70,7 @@ func (c *shortenUrlControllerImpl) Add(ctx fiber.Ctx) error {
 	if err := helpers.BindValidateDefaultCtx(ctx, helpers.Body, params); err != nil {
 		return err
 	}
-	data, err := c.shortenUrlService.Add(ctx.Context(), params.ToServiceParams())
+	data, err := c.shortenUrlService.Add(ctx.Context(), mapper.MustMap[*AddShortenUrlParams, *services.AddShortenUrlParams](mapper.Global, params))
 
 	if err != nil {
 		return err
